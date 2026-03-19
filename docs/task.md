@@ -63,8 +63,8 @@ how users give feedback, inputs, outputs, edge cases, tools, and output format.
 Then write PRD.md with overview and each task as a subsection:
 
 ## Task <N>: <name>
-- Implemented: true/false  ← set to true once SKILL.md/code for this task is written
-- Test Passed: true/false  ← set to true once test-skill confirms output meets criteria
+- Implemented: true/false  (set to true once SKILL.md/code for this task is written)
+- Test Passed: true/false  (set to true once test-skill confirms output meets criteria)
 - Goal:
 - Inputs:
 - Outputs:

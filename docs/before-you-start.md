@@ -1,46 +1,13 @@
 # Before You Start
 
-## Ollama API Key (required)
 
-You need an Ollama account to use the `qwen3.5:cloud` model, which is the default for this exercise.
+### LLM Service 
 
-1. Go to [ollama.com](https://ollama.com/) and sign in or create a free account
+You'll need an LLM API key to run LLMs in this exercise. You can use any API key that works with OpenCode, but we recommend using either Ollama Cloud or OpenRouter since they both have free tiers that are easy to set up.
 
-![](./ollama-hp.png)
+- [How to create API Key in Ollama Cloud](./ollama.md)
+- [How to create API Key in OpenRouter](./openrouter.md)
 
-2. Click your profile icon and go to **Settings → Keys**
-3. Click **Add API Key**, give it a name, and copy the key
-
-![](./api-key.png)
-4. In OpenCode, type `/connect`, select **Ollama Cloud**, and paste the key
-
-Free accounts include access to `qwen3.5:cloud` with no credit card required.
-
-
-## OpenRouter API Key (optional)
-
-OpenRouter gives you access to 20+ free models from a single API key, including `qwen/qwen3.5-flash-02-23` which is pre-configured in this exercise.
-
-**To get a key:**
-1. Go to [openrouter.ai](https://openrouter.ai/) and sign in or create a free account
-2. Go to **Settings → Keys** and click **Create Key**
-3. Copy the key
-4. In OpenCode, type `/connect`, select **OpenRouter**, and paste the key
-
-**Notable free models on OpenRouter:**
-
-| Model | ID |
-|---|---|
-| Qwen 3.5 35B | `qwen/qwen3.5-35b-a3b-20260224:free` |
-| Qwen 3.5 Plus | `qwen/qwen3.5-plus-20260216:free` |
-| DeepSeek V3 | `deepseek/deepseek-v3:free` |
-| Gemini 2.5 Flash | `google/gemini-2.5-flash:free` |
-
-Free models have rate limits (roughly 20 requests/min, 200 requests/day). For this exercise that is more than enough.
-
-Switch models anytime inside OpenCode with `/model`.
-
----
 
 ## GitHub Codespaces (optional tips)
 

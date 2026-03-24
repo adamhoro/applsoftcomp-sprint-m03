@@ -1,54 +1,80 @@
-# Message Coach Skill
+---
+name: message coach skill 
+description: Rewrite messages more proffesionally given specific contexts 
+---
 
+# Message Coach Skill
 ## Invocation
 /message-coach "Rewrite this: [your rough message]"
-Or: /message-coach [message] --type [email|slack|formal|casual] --feedback "[optional feedback]"
 
-## Overview
-Rewrites rough messages into polished communications. Learns your tone/style preferences through feedback. Implements write (persist), select (retrieve), isolate (sub-agents) primitives.
+## Shared Files
+`templates/preferences.md` (tone/style), `templates/history.md` (log).
 
-## Workflow
+## Steps (execute in order)
 
-### 1. SELECT: Load Context
-- Read preferences.md: extract tone/style preferences
-- Read history.md: find 2-3 similar past rewrites (match by --type)
-- Pass context to sub-agents
+### 1. Init
+```bash
+mkdir -p .agents/skills/message-coach/templates
+touch .agents/skills/message-coach/templates/preferences.md
+touch .agents/skills/message-coach/templates/history.md
+```
 
-### 2. ISOLATE: Spawn Sub-Agents (sequential)
-**Planner** (Task tool):
-- Analyze message type and intent
-- Identify tone requirements from preferences
-- Create rewrite plan (3 bullets max)
+### 2. Parse Input
+Extract the message text from the invocation.
 
-**Drafter** (Task tool):
-- Execute rewrite per plan
-- Apply preferences (concise, friendly, formal, etc.)
-- Output polished message
+### 3. SELECT: Filter Context
+```bash
+cd .agents/skills/message-coach
+grep -i "type:" templates/preferences.md
+grep -A3 "type:" templates/history.md | head -10
+```
+Store filtered output as CONTEXT.
 
-**Reviewer** (Task tool):
-- Check against preferences
-- Flag issues (too long, wrong tone, missing clarity)
-- Suggest 1-2 improvements or approve
+### 4. ISOLATE: Spawn Sub-Agents (sequential via Task tool)
 
-### 3. WRITE: Persist State
-- Append to history.md: timestamp, type, original, rewritten, feedback
-- Append to preferences.md: any new feedback with timestamp
-- Create files if missing
+**Planner** (Task tool, general):
+```
+You are Planner. Analyze this message: [message]
+Context: [CONTEXT from step 3]
+Output exactly 3 bullets:
+1. Tone goal
+2. Key points to preserve
+3. Structure recommendation
+```
 
-## Feedback Loop
-After output, user can say:
-- "Too formal, make friendlier"
-- "Be more concise"
-- "Use more direct language"
-Message Coach saves this and applies next run.
+**Drafter** (Task tool, general):
+```
+You are Drafter. Rewrite this message: [message]
+Plan: [output from Planner]
+Preferences: [CONTEXT]
+Output: polished rewrite, max 3 sentences, conversational
+```
 
-## Files
-- SKILL.md (this file)
-- templates/preferences.md (tone/style storage)
-- templates/history.md (rewrite log)
+**Reviewer** (Task tool, general):
+```
+You are Reviewer. Check this rewrite: [output from Drafter]
+Criteria: tone match, clarity, max 3 sentences
+Output: "APPROVE" or list 1-2 specific fixes
+```
 
-## Constraints
-- SKILL.md under 150 lines
-- Sub-agents run sequentially
-- Only load relevant context (selective read)
-- Commit after each task: "message-coach: [what changed]"
+### 5. WRITE: Persist State
+```bash
+cd .agents/skills/message-coach
+echo "## $(date +%Y-%m-%d) type=email" >> templates/history.md
+echo "Original: [message]" >> templates/history.md
+echo "Rewritten: [output from Reviewer]" >> templates/history.md
+echo "Feedback: [if user gave feedback]" >> templates/history.md
+```
+
+If user gave new feedback:
+```bash
+echo "- $(date): [feedback]" >> templates/preferences.md
+```
+
+### 6. Output
+Display the final rewritten message to user.
+
+## Style Rules
+- Max 3 sentences in rewrite
+- Conversational tone
+- Apply stored preferences from CONTEXT
